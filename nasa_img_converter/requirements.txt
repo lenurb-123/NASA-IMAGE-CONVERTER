@@ -10,8 +10,6 @@ numpy>=1.26.4
 Pillow==10.4.0
 
 # Image Processing - Advanced (Optional but recommended for 5-10x speed)
-opencv-python-headless>=4.8.0
-pyvips>=2.2.1
 
 # NASA PDS Format Support
 pvl==1.3.2
