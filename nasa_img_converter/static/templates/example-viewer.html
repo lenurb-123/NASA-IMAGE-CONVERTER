@@ -1,0 +1,350 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>NASA Space Explorer - Scientific Image Viewer</title>
+    
+    <!-- Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=Space+Grotesk:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+    
+    <!-- Font Awesome pour les icônes -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    
+    <!-- Design System CSS -->
+    <link rel="stylesheet" href="../css/space-design-system.css">
+    <link rel="stylesheet" href="../css/image-viewer.css">
+    <link rel="stylesheet" href="../css/toolbar.css">
+    <link rel="stylesheet" href="../css/minimap-overlays.css">
+    <link rel="stylesheet" href="../css/loading-screen.css">
+</head>
+<body>
+    
+    <!-- ========== SPLASH SCREEN (au chargement) ========== -->
+    <div class="splash-screen" id="splashScreen">
+        <div class="splash-background">
+            <div class="splash-stars"></div>
+            <div class="orbit-ring"></div>
+            <div class="orbit-ring"></div>
+            <div class="orbit-ring"></div>
+            <div class="nebula-effect"></div>
+        </div>
+        
+        <div class="splash-logo">
+            <div class="logo-icon">
+                <i class="fas fa-rocket"></i>
+            </div>
+            <div class="logo-text">
+                <h1 class="logo-title">NASA EXPLORER</h1>
+                <p class="logo-subtitle">Scientific Image Viewer</p>
+            </div>
+        </div>
+        
+        <div class="loading-animation">
+            <div class="orbital-spinner">
+                <div class="orbital-spinner-ring"></div>
+                <div class="orbital-spinner-ring"></div>
+                <div class="orbital-spinner-ring"></div>
+            </div>
+            
+            <div class="loading-progress">
+                <div class="loading-progress-bar" style="width: 0%" id="loadingBar"></div>
+            </div>
+            
+            <div class="loading-text">
+                Initializing Space Explorer...
+                <span class="loading-percentage" id="loadingPercentage">0%</span>
+            </div>
+        </div>
+        
+        <div class="loading-status">
+            <span class="loading-status-icon">🛰️</span>
+            <span id="loadingStatus">Loading resources</span>
+        </div>
+    </div>
+    
+    <!-- ========== FOND COSMIQUE ========== -->
+    <div class="cosmic-background">
+        <div class="stars-layer"></div>
+        <div class="nebula-effect"></div>
+    </div>
+    
+    <!-- ========== VIEWER PRINCIPAL ========== -->
+    <div class="image-viewer-container">
+        
+        <!-- Zone de visualisation -->
+        <div class="viewer-canvas" id="viewerCanvas">
+            <!-- Image principale -->
+            <div class="viewer-image" id="viewerImage">
+                <img src="https://via.placeholder.com/1920x1080/1a1f2e/00d4ff?text=NASA+Scientific+Image" 
+                     alt="Scientific Image" 
+                     id="mainImage">
+            </div>
+            
+            <!-- Overlays -->
+            <div class="viewer-overlay">
+                <!-- Grille scientifique -->
+                <div class="viewer-grid" id="scientificGrid"></div>
+                
+                <!-- Indicateur de zoom -->
+                <div class="zoom-indicator" id="zoomIndicator">
+                    100%
+                </div>
+                
+                <!-- Coordonnées -->
+                <div class="viewer-coordinates" id="coordinates">
+                    <span>X: <strong>0</strong></span>
+                    <span>Y: <strong>0</strong></span>
+                    <span>Z: <strong>100%</strong></span>
+                </div>
+            </div>
+            
+            <!-- Annotations (exemples) -->
+            <div class="annotation-marker" style="left: 30%; top: 40%;" data-annotation="crater">
+                <div class="annotation-popup">
+                    <div class="annotation-popup-header">
+                        <span class="annotation-popup-title">Impact Crater</span>
+                        <button class="annotation-popup-close">×</button>
+                    </div>
+                    <div class="annotation-popup-content">
+                        Large impact crater detected. Diameter: ~45km. Age estimate: 3.2 billion years.
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- ========== TOOLBAR FLOTTANTE ========== -->
+    <div class="toolbar-container" id="toolbar">
+        <!-- Groupe 1: Outils de base -->
+        <div class="toolbar-group">
+            <button class="tool-btn active" id="btnPan" title="Pan (drag)">
+                <i class="fas fa-hand-paper"></i>
+                <span class="tool-btn-tooltip">Pan</span>
+            </button>
+            <button class="tool-btn" id="btnSelect" title="Select">
+                <i class="fas fa-mouse-pointer"></i>
+                <span class="tool-btn-tooltip">Select</span>
+            </button>
+            <button class="tool-btn" id="btnMeasure" title="Measure">
+                <i class="fas fa-ruler"></i>
+                <span class="tool-btn-tooltip">Measure</span>
+            </button>
+            <button class="tool-btn" id="btnAnnotate" title="Annotate">
+                <i class="fas fa-map-pin"></i>
+                <span class="tool-btn-tooltip">Annotate</span>
+            </button>
+        </div>
+        
+        <div class="toolbar-separator"></div>
+        
+        <!-- Groupe 2: Zoom -->
+        <div class="toolbar-group zoom-controls">
+            <button class="tool-btn" id="btnZoomIn">
+                <i class="fas fa-search-plus"></i>
+                <span class="tool-btn-tooltip">Zoom In</span>
+            </button>
+            
+            <div class="zoom-slider">
+                <div class="zoom-slider-track" style="width: 50%"></div>
+                <div class="zoom-slider-thumb" style="left: 50%"></div>
+            </div>
+            <div class="zoom-value">100%</div>
+            
+            <button class="tool-btn" id="btnZoomOut">
+                <i class="fas fa-search-minus"></i>
+                <span class="tool-btn-tooltip">Zoom Out</span>
+            </button>
+            <button class="tool-btn" id="btnZoomFit">
+                <i class="fas fa-expand"></i>
+                <span class="tool-btn-tooltip">Fit to Screen</span>
+            </button>
+        </div>
+        
+        <div class="toolbar-separator"></div>
+        
+        <!-- Groupe 3: Affichage -->
+        <div class="toolbar-group">
+            <button class="tool-btn" id="btnGrid">
+                <i class="fas fa-th"></i>
+                <span class="tool-btn-tooltip">Toggle Grid</span>
+            </button>
+            <button class="tool-btn" id="btnLayers">
+                <i class="fas fa-layer-group"></i>
+                <span class="tool-btn-tooltip">Layers</span>
+            </button>
+            <button class="tool-btn" id="btnInfo">
+                <i class="fas fa-info-circle"></i>
+                <span class="tool-btn-tooltip">Image Info</span>
+            </button>
+        </div>
+    </div>
+    
+    <!-- ========== MINIMAP ========== -->
+    <div class="minimap-container" id="minimap">
+        <div class="minimap-header">
+            <span class="minimap-title">Overview</span>
+            <button class="minimap-toggle" id="minimapToggle">
+                <i class="fas fa-compress"></i>
+            </button>
+        </div>
+        <div class="minimap-canvas">
+            <img src="https://via.placeholder.com/400x300/0a0e1a/00d4ff?text=Mini+Map" 
+                 alt="Minimap" 
+                 class="minimap-image">
+            <div class="minimap-viewport" style="left: 25%; top: 25%; width: 50%; height: 50%"></div>
+        </div>
+    </div>
+    
+    <!-- ========== INFO OVERLAY (exemple) ========== -->
+    <div class="info-overlay" id="infoOverlay" style="display: none;">
+        <div class="info-overlay-header">
+            <div class="info-overlay-icon">
+                <i class="fas fa-image"></i>
+            </div>
+            <h3 class="info-overlay-title">Image Information</h3>
+            <button class="info-overlay-close" id="closeInfo">
+                <i class="fas fa-times"></i>
+            </button>
+        </div>
+        <div class="info-overlay-content">
+            <div class="info-item">
+                <span class="info-label">Mission</span>
+                <span class="info-value">Mars 2020</span>
+            </div>
+            <div class="info-item">
+                <span class="info-label">Instrument</span>
+                <span class="info-value">Mastcam-Z</span>
+            </div>
+            <div class="info-item">
+                <span class="info-label">Resolution</span>
+                <span class="info-value">4096 × 3072</span>
+            </div>
+            <div class="info-item">
+                <span class="info-label">File Size</span>
+                <span class="info-value">24.5 MB</span>
+            </div>
+            <div class="info-item">
+                <span class="info-label">Date</span>
+                <span class="info-value">2024-01-15</span>
+            </div>
+        </div>
+    </div>
+    
+    <!-- ========== NOTIFICATION TOAST (exemple) ========== -->
+    <div class="notification-toast success" id="notification" style="display: none;">
+        <div class="notification-header">
+            <div class="notification-icon">✓</div>
+            <h4 class="notification-title">Image loaded</h4>
+        </div>
+        <p class="notification-message">
+            Scientific image loaded successfully. Ready for analysis.
+        </p>
+        <div class="notification-progress"></div>
+    </div>
+    
+    <!-- ========== SCRIPTS ========== -->
+    <script>
+        // ========== SIMULATION DE CHARGEMENT ==========
+        document.addEventListener('DOMContentLoaded', function() {
+            const splashScreen = document.getElementById('splashScreen');
+            const loadingBar = document.getElementById('loadingBar');
+            const loadingPercentage = document.getElementById('loadingPercentage');
+            const loadingStatus = document.getElementById('loadingStatus');
+            
+            // Simulation du chargement
+            let progress = 0;
+            const statusMessages = [
+                'Loading resources...',
+                'Initializing image processor...',
+                'Loading scientific data...',
+                'Preparing viewer...',
+                'Almost ready...'
+            ];
+            
+            const loadingInterval = setInterval(() => {
+                progress += Math.random() * 15;
+                if (progress > 100) progress = 100;
+                
+                loadingBar.style.width = progress + '%';
+                loadingPercentage.textContent = Math.floor(progress) + '%';
+                
+                const statusIndex = Math.floor(progress / 20);
+                if (statusMessages[statusIndex]) {
+                    loadingStatus.textContent = statusMessages[statusIndex];
+                }
+                
+                if (progress >= 100) {
+                    clearInterval(loadingInterval);
+                    setTimeout(() => {
+                        splashScreen.classList.add('fade-out');
+                        setTimeout(() => {
+                            splashScreen.style.display = 'none';
+                        }, 800);
+                    }, 500);
+                }
+            }, 150);
+        });
+        
+        // ========== TOOLBAR INTERACTIONS ==========
+        document.querySelectorAll('.tool-btn').forEach(btn => {
+            btn.addEventListener('click', function() {
+                // Remove active from all
+                document.querySelectorAll('.tool-btn').forEach(b => b.classList.remove('active'));
+                // Add active to clicked
+                this.classList.add('active');
+            });
+        });
+        
+        // Grid toggle
+        document.getElementById('btnGrid')?.addEventListener('click', function() {
+            const grid = document.getElementById('scientificGrid');
+            grid.classList.toggle('active');
+        });
+        
+        // Info toggle
+        document.getElementById('btnInfo')?.addEventListener('click', function() {
+            const info = document.getElementById('infoOverlay');
+            info.style.display = info.style.display === 'none' ? 'block' : 'none';
+        });
+        
+        document.getElementById('closeInfo')?.addEventListener('click', function() {
+            document.getElementById('infoOverlay').style.display = 'none';
+        });
+        
+        // Minimap toggle
+        document.getElementById('minimapToggle')?.addEventListener('click', function() {
+            document.getElementById('minimap').classList.toggle('collapsed');
+        });
+        
+        // ========== COORDONNÉES AU SURVOL ==========
+        const viewerCanvas = document.getElementById('viewerCanvas');
+        const coordinates = document.getElementById('coordinates');
+        
+        viewerCanvas.addEventListener('mousemove', function(e) {
+            const rect = this.getBoundingClientRect();
+            const x = Math.floor((e.clientX - rect.left) / rect.width * 1000);
+            const y = Math.floor((e.clientY - rect.top) / rect.height * 1000);
+            
+            coordinates.querySelector('span:nth-child(1) strong').textContent = x;
+            coordinates.querySelector('span:nth-child(2) strong').textContent = y;
+            coordinates.classList.add('active');
+        });
+        
+        viewerCanvas.addEventListener('mouseleave', function() {
+            coordinates.classList.remove('active');
+        });
+        
+        // ========== NOTIFICATION EXEMPLE ==========
+        setTimeout(() => {
+            const notification = document.getElementById('notification');
+            notification.style.display = 'block';
+            setTimeout(() => {
+                notification.style.display = 'none';
+            }, 3000);
+        }, 2000);
+    </script>
+</body>
+</html>

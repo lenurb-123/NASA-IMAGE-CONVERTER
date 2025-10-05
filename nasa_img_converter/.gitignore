@@ -1,0 +1,35 @@
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.pyc
+*.so
+.Python
+venv/
+ENV/
+.env
+
+# Cache and temporary files
+cache/
+cache_tiff/
+temp_uploads/
+temp_downloads/
+*.tmp
+*.temp
+*.img
+*.IMG
+*.tif
+*.tiff
+
+# Logs
+*.log
+
+# IDE
+.vscode/
+.idea/
+*.swo
+*.swp
+
+# OS
+.DS_Store
+Thumbs.db

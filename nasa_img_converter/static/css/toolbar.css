@@ -1,0 +1,398 @@
+/* ================================================================
+   TOOLBAR - Barre d'outils flottante
+   Outils de contrôle pour zoom, mesures, annotations, etc.
+   ================================================================ */
+
+/* === TOOLBAR PRINCIPAL === */
+.toolbar-container {
+    position: fixed;
+    top: var(--space-xl);
+    right: var(--space-xl);
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-sm);
+    z-index: var(--z-toolbar);
+    animation: slide-down 0.5s ease-out;
+}
+
+.toolbar-group {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-xs);
+    padding: var(--space-sm);
+    background: var(--glass-bg);
+    backdrop-filter: blur(20px);
+    border: 1px solid var(--glass-border);
+    border-radius: var(--radius-xl);
+    box-shadow: var(--shadow-medium);
+}
+
+/* === TOOLBAR BUTTONS === */
+.tool-btn {
+    position: relative;
+    width: 48px;
+    height: 48px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: transparent;
+    border: 1px solid transparent;
+    border-radius: var(--radius-lg);
+    color: var(--star-silver);
+    cursor: pointer;
+    transition: all var(--transition-base);
+    overflow: hidden;
+}
+
+.tool-btn::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: var(--gradient-aurora);
+    opacity: 0;
+    transition: opacity var(--transition-base);
+    border-radius: var(--radius-lg);
+}
+
+.tool-btn:hover {
+    background: var(--glass-hover);
+    border-color: var(--glass-border);
+    color: var(--nebula-cyan);
+    transform: scale(1.05);
+}
+
+.tool-btn:hover::before {
+    opacity: 0.1;
+}
+
+.tool-btn.active {
+    background: rgba(0, 212, 255, 0.15);
+    border-color: var(--nebula-cyan);
+    color: var(--nebula-cyan);
+    box-shadow: 0 0 20px rgba(0, 212, 255, 0.3);
+}
+
+.tool-btn:active {
+    transform: scale(0.95);
+}
+
+/* Icon dans le bouton */
+.tool-btn svg,
+.tool-btn i {
+    position: relative;
+    z-index: 1;
+    width: 20px;
+    height: 20px;
+}
+
+/* === TOOLTIP POUR TOOLBAR === */
+.tool-btn-tooltip {
+    position: absolute;
+    right: calc(100% + var(--space-sm));
+    top: 50%;
+    transform: translateY(-50%) translateX(10px);
+    padding: var(--space-xs) var(--space-sm);
+    background: var(--space-medium);
+    border: 1px solid var(--glass-border);
+    border-radius: var(--radius-sm);
+    color: var(--star-white);
+    font-size: 0.75rem;
+    white-space: nowrap;
+    opacity: 0;
+    pointer-events: none;
+    transition: all var(--transition-base);
+    box-shadow: var(--shadow-soft);
+}
+
+.tool-btn-tooltip::after {
+    content: '';
+    position: absolute;
+    right: -6px;
+    top: 50%;
+    transform: translateY(-50%);
+    width: 0;
+    height: 0;
+    border-top: 6px solid transparent;
+    border-bottom: 6px solid transparent;
+    border-left: 6px solid var(--space-medium);
+}
+
+.tool-btn:hover .tool-btn-tooltip {
+    opacity: 1;
+    transform: translateY(-50%) translateX(0);
+}
+
+/* === SÉPARATEURS === */
+.toolbar-separator {
+    width: 100%;
+    height: 1px;
+    background: var(--glass-border);
+    margin: var(--space-xs) 0;
+}
+
+/* === ZOOM CONTROLS === */
+.zoom-controls {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-xs);
+}
+
+.zoom-slider {
+    width: 120px;
+    height: 4px;
+    background: var(--space-light);
+    border-radius: var(--radius-full);
+    position: relative;
+    margin: var(--space-sm) auto;
+    cursor: pointer;
+}
+
+.zoom-slider-track {
+    height: 100%;
+    background: var(--gradient-aurora);
+    border-radius: var(--radius-full);
+    transition: width var(--transition-base);
+}
+
+.zoom-slider-thumb {
+    position: absolute;
+    top: 50%;
+    transform: translate(-50%, -50%);
+    width: 16px;
+    height: 16px;
+    background: white;
+    border: 2px solid var(--nebula-cyan);
+    border-radius: 50%;
+    cursor: grab;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
+    transition: all var(--transition-fast);
+}
+
+.zoom-slider-thumb:hover {
+    transform: translate(-50%, -50%) scale(1.2);
+    box-shadow: 0 0 16px rgba(0, 212, 255, 0.5);
+}
+
+.zoom-slider-thumb:active {
+    cursor: grabbing;
+}
+
+.zoom-value {
+    text-align: center;
+    font-size: 0.75rem;
+    font-family: var(--font-mono);
+    color: var(--nebula-cyan);
+    font-weight: 600;
+}
+
+/* === COLOR CONTROLS === */
+.color-controls {
+    padding: var(--space-md);
+}
+
+.color-slider {
+    margin-bottom: var(--space-sm);
+}
+
+.color-slider-label {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: var(--space-xs);
+    font-size: 0.7rem;
+    color: var(--star-silver);
+}
+
+.color-slider-value {
+    font-family: var(--font-mono);
+    color: var(--nebula-cyan);
+}
+
+.color-slider input[type="range"] {
+    width: 100%;
+    height: 4px;
+    background: var(--space-light);
+    border-radius: var(--radius-full);
+    outline: none;
+    -webkit-appearance: none;
+}
+
+.color-slider input[type="range"]::-webkit-slider-thumb {
+    -webkit-appearance: none;
+    width: 14px;
+    height: 14px;
+    background: var(--nebula-cyan);
+    border-radius: 50%;
+    cursor: pointer;
+    box-shadow: 0 0 8px rgba(0, 212, 255, 0.5);
+}
+
+.color-slider input[type="range"]::-moz-range-thumb {
+    width: 14px;
+    height: 14px;
+    background: var(--nebula-cyan);
+    border-radius: 50%;
+    cursor: pointer;
+    border: none;
+}
+
+/* === LAYER CONTROLS === */
+.layer-controls {
+    min-width: 200px;
+    padding: var(--space-md);
+}
+
+.layer-item {
+    display: flex;
+    align-items: center;
+    gap: var(--space-sm);
+    padding: var(--space-sm);
+    background: rgba(255, 255, 255, 0.02);
+    border: 1px solid transparent;
+    border-radius: var(--radius-md);
+    margin-bottom: var(--space-xs);
+    cursor: pointer;
+    transition: all var(--transition-fast);
+}
+
+.layer-item:hover {
+    background: rgba(255, 255, 255, 0.05);
+    border-color: var(--glass-border);
+}
+
+.layer-item.active {
+    background: rgba(0, 212, 255, 0.1);
+    border-color: var(--nebula-cyan);
+}
+
+.layer-checkbox {
+    width: 16px;
+    height: 16px;
+    border: 2px solid var(--glass-border);
+    border-radius: var(--radius-sm);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: transparent;
+    transition: all var(--transition-fast);
+}
+
+.layer-checkbox.checked {
+    background: var(--nebula-cyan);
+    border-color: var(--nebula-cyan);
+}
+
+.layer-checkbox.checked::after {
+    content: '✓';
+    color: white;
+    font-size: 0.7rem;
+}
+
+.layer-name {
+    flex: 1;
+    font-size: 0.8rem;
+    color: var(--star-white);
+}
+
+.layer-opacity {
+    font-size: 0.7rem;
+    font-family: var(--font-mono);
+    color: var(--star-silver);
+}
+
+/* === TOOLBAR MODES === */
+.toolbar-container.compact {
+    top: var(--space-md);
+    right: var(--space-md);
+}
+
+.toolbar-container.compact .toolbar-group {
+    flex-direction: row;
+    padding: var(--space-xs);
+}
+
+.toolbar-container.compact .tool-btn {
+    width: 40px;
+    height: 40px;
+}
+
+/* Position alternative (en bas) */
+.toolbar-container.bottom {
+    top: auto;
+    bottom: var(--space-xl);
+}
+
+/* === RESPONSIVE === */
+@media (max-width: 1024px) {
+    .toolbar-container {
+        top: var(--space-md);
+        right: var(--space-md);
+    }
+    
+    .tool-btn {
+        width: 44px;
+        height: 44px;
+    }
+}
+
+@media (max-width: 768px) {
+    .toolbar-container {
+        top: var(--space-sm);
+        right: var(--space-sm);
+        flex-direction: row;
+    }
+    
+    .toolbar-group {
+        flex-direction: row;
+    }
+    
+    .tool-btn {
+        width: 40px;
+        height: 40px;
+    }
+    
+    .tool-btn-tooltip {
+        right: 50%;
+        top: auto;
+        bottom: calc(100% + var(--space-sm));
+        transform: translateX(50%) translateY(10px);
+    }
+    
+    .tool-btn-tooltip::after {
+        right: 50%;
+        top: auto;
+        bottom: -6px;
+        transform: translateX(50%);
+        border-left: 6px solid transparent;
+        border-right: 6px solid transparent;
+        border-top: 6px solid var(--space-medium);
+    }
+    
+    .tool-btn:hover .tool-btn-tooltip {
+        transform: translateX(50%) translateY(0);
+    }
+}
+
+@media (max-width: 480px) {
+    .toolbar-container {
+        left: var(--space-xs);
+        right: var(--space-xs);
+        top: auto;
+        bottom: var(--space-xs);
+        flex-direction: row;
+        justify-content: center;
+    }
+    
+    .toolbar-group {
+        padding: var(--space-xs);
+    }
+    
+    .tool-btn {
+        width: 36px;
+        height: 36px;
+    }
+    
+    .zoom-slider {
+        width: 80px;
+    }
+}

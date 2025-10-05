@@ -1,0 +1,843 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>NASA Image Converter - Professional Spaceimagery Processing</title>
+    <meta name="description" content="Convert NASA PDS scientific images to high-quality formats with advanced processing. Professional tool for space imagery analysis.">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=Space+Grotesk:wght@400;500;600;700&display=swap" rel="stylesheet">
+    
+    <!-- Design System Moderne -->
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/modern-design.css') }}">
+    
+    <!-- Interface Premium Niveau Meta/Facebook -->
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/premium-interface.css') }}">
+    
+    <style>
+        :root {
+            /* Couleurs principales - Thème spatial moderne */
+            --bg-primary: #0a0e1a;
+            --bg-secondary: #0f1419;
+            --bg-tertiary: #1a1f2e;
+            --bg-card: linear-gradient(135deg, rgba(19, 24, 37, 0.95), rgba(26, 31, 46, 0.95));
+            --bg-glass: rgba(255, 255, 255, 0.05);
+            
+            /* Accents - Palette spatiale */
+            --accent-primary: #00d4ff;
+            --accent-secondary: #0099ff;
+            --accent-tertiary: #6366f1;
+            --accent-warm: #f59e0b;
+            --accent-success: #10b981;
+            --accent-error: #ef4444;
+            --accent-warning: #f59e0b;
+            
+            /* Gradients */
+            --gradient-primary: linear-gradient(135deg, #00d4ff 0%, #0099ff 50%, #6366f1 100%);
+            --gradient-warm: linear-gradient(135deg, #f59e0b 0%, #ef4444 100%);
+            --gradient-cosmic: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            --gradient-aurora: linear-gradient(135deg, #00d4ff 0%, #10b981 50%, #f59e0b 100%);
+            
+            /* Texte */
+            --text-primary: #ffffff;
+            --text-secondary: rgba(255, 255, 255, 0.8);
+            --text-tertiary: rgba(255, 255, 255, 0.6);
+            --text-muted: rgba(255, 255, 255, 0.4);
+            
+            /* Bordures et ombres */
+            --border-light: rgba(255, 255, 255, 0.1);
+            --border-medium: rgba(255, 255, 255, 0.2);
+            --shadow-sm: 0 2px 8px rgba(0, 0, 0, 0.3);
+            --shadow-md: 0 4px 16px rgba(0, 0, 0, 0.4);
+            --shadow-lg: 0 8px 32px rgba(0, 0, 0, 0.5);
+            --shadow-xl: 0 16px 64px rgba(0, 0, 0, 0.6);
+            --shadow-glow: 0 0 30px rgba(0, 212, 255, 0.3);
+            
+            /* Espacements */
+            --space-xs: 0.25rem;
+            --space-sm: 0.5rem;
+            --space-md: 1rem;
+            --space-lg: 1.5rem;
+            --space-xl: 2rem;
+            --space-2xl: 3rem;
+            
+            /* Transitions */
+            --transition-fast: 0.15s ease;
+            --transition-base: 0.3s ease;
+            --transition-slow: 0.5s ease;
+            
+            /* Border radius */
+            --radius-sm: 0.375rem;
+            --radius-md: 0.5rem;
+            --radius-lg: 0.75rem;
+            --radius-xl: 1rem;
+            --radius-2xl: 1.5rem;
+            --radius-full: 9999px;
+        }
+        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+            background: var(--bg-primary);
+            color: var(--text-primary);
+            min-height: 100vh;
+            position: relative;
+            overflow-x: hidden;
+        }
+        
+        /* Animation d'étoiles en arrière-plan */
+        body::before {
+            content: '';
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-image: 
+                radial-gradient(2px 2px at 20% 30%, white, transparent),
+                radial-gradient(2px 2px at 60% 70%, white, transparent),
+                radial-gradient(1px 1px at 50% 50%, white, transparent),
+                radial-gradient(1px 1px at 80% 10%, white, transparent),
+                radial-gradient(2px 2px at 90% 60%, white, transparent),
+                radial-gradient(1px 1px at 33% 80%, white, transparent);
+            background-size: 200% 200%;
+            animation: stars 60s linear infinite;
+            opacity: 0.5;
+            z-index: 0;
+        }
+        
+        @keyframes stars {
+            from { background-position: 0 0; }
+            to { background-position: 100% 100%; }
+        }
+        
+        .container {
+            max-width: 1000px;
+            margin: 0 auto;
+            position: relative;
+            z-index: 1;
+        }
+        
+        /* Header avec logo NASA style */
+        .header {
+            text-align: center;
+            margin-bottom: 40px;
+            animation: fadeInDown 0.8s ease-out;
+        }
+        
+        .header h1 {
+            color: white;
+            font-size: 3rem;
+            font-weight: 700;
+            margin-bottom: 10px;
+            text-shadow: 0 0 20px rgba(0, 212, 255, 0.5);
+            letter-spacing: 2px;
+        }
+        
+        .header .subtitle {
+            color: var(--accent-cyan);
+            font-size: 1.2rem;
+            font-weight: 300;
+            letter-spacing: 3px;
+        }
+        
+        .nasa-badge {
+            display: inline-block;
+            background: linear-gradient(135deg, var(--nasa-blue), var(--nasa-red));
+            color: white;
+            padding: 8px 20px;
+            border-radius: 50px;
+            font-size: 0.9rem;
+            font-weight: 600;
+            margin-top: 15px;
+            box-shadow: 0 4px 15px rgba(252, 61, 33, 0.3);
+        }
+        
+        /* Carte principale */
+        .main-card {
+            background: rgba(26, 31, 58, 0.95);
+            backdrop-filter: blur(10px);
+            border-radius: 20px;
+            padding: 40px;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.5);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            animation: fadeInUp 0.8s ease-out;
+        }
+        
+        @keyframes fadeInDown {
+            from {
+                opacity: 0;
+                transform: translateY(-30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+        
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+        
+        .form-label {
+            color: white;
+            font-weight: 600;
+            margin-bottom: 10px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        
+        .form-control {
+            background: rgba(255, 255, 255, 0.1);
+            border: 2px solid rgba(255, 255, 255, 0.2);
+            color: white;
+            padding: 15px;
+            border-radius: 10px;
+            font-size: 1rem;
+            transition: all 0.3s ease;
+        }
+        
+        .form-control:focus {
+            background: rgba(255, 255, 255, 0.15);
+            border-color: var(--accent-cyan);
+            box-shadow: 0 0 20px rgba(0, 212, 255, 0.3);
+            color: white;
+        }
+        
+        .form-control::placeholder {
+            color: rgba(255, 255, 255, 0.5);
+        }
+        
+        .form-text {
+            color: rgba(255, 255, 255, 0.6);
+            font-size: 0.9rem;
+            margin-top: 8px;
+        }
+        
+        /* Bouton de conversion stylé */
+        .btn-convert {
+            background: linear-gradient(135deg, var(--accent-cyan), var(--accent-purple));
+            border: none;
+            color: white;
+            padding: 15px 40px;
+            border-radius: 50px;
+            font-size: 1.1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: 0 10px 30px rgba(0, 212, 255, 0.3);
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .btn-convert::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.3), transparent);
+            transition: left 0.5s;
+        }
+        
+        .btn-convert:hover::before {
+            left: 100%;
+        }
+        
+        .btn-convert:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 15px 40px rgba(0, 212, 255, 0.5);
+        }
+        
+        .btn-convert:active {
+            transform: translateY(0);
+        }
+        
+        /* Animation de chargement */
+        .loading {
+            display: none;
+            text-align: center;
+            padding: 40px;
+            animation: fadeIn 0.5s ease;
+        }
+        
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+        
+        .loading-spinner {
+            width: 80px;
+            height: 80px;
+            margin: 0 auto 20px;
+            border: 4px solid rgba(0, 212, 255, 0.2);
+            border-top: 4px solid var(--accent-cyan);
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+        }
+        
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+        
+        .loading-text {
+            color: white;
+            font-size: 1.2rem;
+            margin-top: 20px;
+        }
+        
+        .loading-subtext {
+            color: rgba(255, 255, 255, 0.6);
+            font-size: 0.9rem;
+            margin-top: 10px;
+        }
+        
+        /* Zone de résultat */
+        #result {
+            display: none;
+            margin-top: 30px;
+            animation: fadeInUp 0.8s ease;
+        }
+        
+        .result-header {
+            color: white;
+            font-size: 1.8rem;
+            font-weight: 600;
+            margin-bottom: 20px;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+        
+        .pds-info {
+            background: linear-gradient(135deg, rgba(0, 212, 255, 0.2), rgba(139, 92, 246, 0.2));
+            border: 1px solid rgba(0, 212, 255, 0.3);
+            border-radius: 15px;
+            padding: 20px;
+            margin-bottom: 25px;
+            color: white;
+        }
+        
+        .pds-info strong {
+            color: var(--accent-cyan);
+            font-size: 1.1rem;
+        }
+        
+        .badge {
+            padding: 8px 15px;
+            border-radius: 20px;
+            font-size: 0.85rem;
+            font-weight: 600;
+        }
+        
+        .image-container {
+            background: rgba(0, 0, 0, 0.3);
+            border-radius: 15px;
+            padding: 20px;
+            margin-bottom: 25px;
+            border: 2px solid rgba(255, 255, 255, 0.1);
+            position: relative;
+            overflow: hidden;
+            min-height: 400px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+        }
+        
+        .image-wrapper {
+            width: 100%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 400px;
+        }
+        
+        
+        
+        /* (Image preview removed) */
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        .image-container::before {
+            content: '';
+            position: absolute;
+            top: -2px;
+            left: -2px;
+            right: -2px;
+            bottom: -2px;
+            background: linear-gradient(45deg, var(--accent-cyan), var(--accent-purple), var(--accent-cyan));
+            border-radius: 15px;
+            opacity: 0;
+            transition: opacity 0.3s;
+            z-index: -1;
+        }
+        
+        .image-container:hover::before {
+            opacity: 0.3;
+        }
+        
+        
+        
+        .btn-download {
+            background: linear-gradient(135deg, #10b981, #059669);
+            border: none;
+            color: white;
+            padding: 15px 35px;
+            border-radius: 50px;
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: 0 10px 30px rgba(16, 185, 129, 0.3);
+            display: inline-flex;
+            align-items: center;
+            gap: 10px;
+        }
+        
+        .btn-download:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 15px 40px rgba(16, 185, 129, 0.5);
+            text-decoration: none;
+            color: white;
+        }
+        
+        /* Alertes d'erreur */
+        .alert-danger {
+            background: rgba(252, 61, 33, 0.2);
+            border: 1px solid rgba(252, 61, 33, 0.5);
+            color: #ff6b6b;
+            border-radius: 15px;
+            padding: 20px;
+            margin-top: 20px;
+        }
+        
+        /* Stats en temps réel */
+        .stats-container {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+            gap: 15px;
+            margin-top: 20px;
+        }
+        
+        .stat-card {
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 12px;
+            padding: 15px;
+            text-align: center;
+            transition: all 0.3s ease;
+        }
+        
+        .stat-card:hover {
+            background: rgba(255, 255, 255, 0.1);
+            transform: translateY(-3px);
+        }
+        
+        .stat-value {
+            color: var(--accent-cyan);
+            font-size: 1.8rem;
+            font-weight: 700;
+        }
+        
+        .stat-label {
+            color: rgba(255, 255, 255, 0.7);
+            font-size: 0.85rem;
+            margin-top: 5px;
+        }
+        
+        /* Responsive */
+        @media (max-width: 768px) {
+            .header h1 {
+                font-size: 2rem;
+            }
+            
+            .main-card {
+                padding: 25px;
+            }
+            
+            .btn-convert {
+                width: 100%;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <!-- Header -->
+        <div class="header">
+            <h1><i class="fas fa-rocket"></i> NASA IMAGE CONVERTER</h1>
+            <div class="subtitle">SPACE IMAGERY CONVERTER</div>
+            <div class="nasa-badge">
+                <i class="fas fa-satellite"></i> PDS3 & PDS4 Support
+            </div>
+        </div>
+        
+        <!-- Carte principale -->
+        <div class="main-card">
+            <form id="conversionForm">
+                <div class="mb-4">
+                    <label for="imageUrl" class="form-label">
+                        <i class="fas fa-link"></i> .IMG File URL
+                    </label>
+                    <input type="url" class="form-control" id="imageUrl" name="url"
+                           placeholder="https://planetarydata.jpl.nasa.gov/img/data/mro/ctx/.../example.IMG" 
+                           required autocomplete="off">
+                    <div class="form-text">
+                        <i class="fas fa-info-circle"></i> Paste the direct URL to a NASA .IMG file
+                    </div>
+                </div>
+                <button type="submit" class="btn-convert">
+                    <i class="fas fa-magic"></i> Convert Image
+                </button>
+            </form>
+            
+            <!-- Animation de chargement avec progression -->
+            <div id="loading" class="loading">
+                <div class="loading-spinner"></div>
+                <div class="loading-text">
+                    <i class="fas fa-cog fa-spin"></i> Converting...
+                </div>
+                <div class="loading-subtext" id="loadingStatus">
+                    Downloading and processing space imagery
+                </div>
+                
+                <!-- Barre de progression -->
+                <div class="progress-container" style="margin-top: 20px; width: 100%; max-width: 500px;">
+                    <div class="progress-bar-bg" style="background: rgba(255,255,255,0.1); border-radius: 10px; height: 30px; position: relative; overflow: hidden;">
+                        <div id="progressBar" class="progress-bar-fill" style="background: linear-gradient(90deg, #00d4ff, #0099ff); height: 100%; width: 0%; transition: width 0.3s ease; border-radius: 10px; display: flex; align-items: center; justify-content: center;">
+                            <span id="progressText" style="color: white; font-weight: bold; font-size: 14px; position: relative; z-index: 1;">0%</span>
+                        </div>
+                    </div>
+                    <div id="progressDetails" style="text-align: center; margin-top: 10px; color: rgba(255,255,255,0.7); font-size: 13px;">
+                        <i class="fas fa-clock"></i> <span id="elapsedTime">0s</span> elapsed
+                        <span style="margin: 0 10px;">•</span>
+                        <span id="currentStep">Initializing...</span>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Result Section -->
+            <div id="result">
+                <div class="result-header">
+                    <i class="fas fa-check-circle"></i> Conversion Successful
+                </div>
+                
+                <div class="pds-info" id="pdsInfo"></div>
+                
+                
+                
+                <!-- Simplified: TIFF download link -->
+                <div class="image-container" id="downloadContainer" style="display: none;">
+                    <div style="text-align: center; margin-bottom: 15px; width: 100%;">
+                        <h3 style="color: var(--accent-cyan); margin: 0;">
+                            <i class="fas fa-image"></i> TIFF Conversion Complete
+                        </h3>
+                        <p style="color: rgba(255,255,255,0.7); font-size: 0.9rem; margin-top: 5px;">
+                            Download the TIFF file for high-quality scientific analysis.
+                        </p>
+                    </div>
+                </div>
+                
+                
+                
+                <div class="text-center">
+                    <a id="downloadBtn" href="#" class="btn-download" download="nasa_image.tif">
+                        <i class="fas fa-download"></i> Download TIFF Image
+                    </a>
+                    <p style="color: rgba(255,255,255,0.6); font-size: 0.85rem; margin-top: 10px;">
+                        <i class="fas fa-info-circle"></i> TIFF format for maximum scientific quality
+                    </p>
+                </div>
+                
+                <!-- Stats -->
+                <div class="stats-container" id="statsContainer" style="display: none;">
+                    <div class="stat-card">
+                        <div class="stat-value" id="statTime">--</div>
+                        <div class="stat-label">Processing Time</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-value" id="statSize">--</div>
+                        <div class="stat-label">Image Size</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-value" id="statFormat">--</div>
+                        <div class="stat-label">Detected Format</div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Errors -->
+            <div id="error" class="alert-danger" style="display: none;">
+                <i class="fas fa-exclamation-triangle"></i> <span id="errorText"></span>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script>
+        let currentImageData = null; // Store current image data
+        
+        $(document).ready(function() {
+            let startTime;
+            
+            function resetProgress() {
+                $('#progressBar').css('width', '0%');
+                $('#progressText').text('0%');
+                $('#elapsedTime').text('0s');
+                $('#currentStep').text('Initialisation...');
+                stopProgress();
+            }
+            
+            $('#conversionForm').on('submit', function(e) {
+                e.preventDefault();
+                
+                const url = $('#imageUrl').val().trim();
+                if (!url) return;
+                
+                // Reset progress
+                resetProgress();
+                
+                // Start timer
+                startTime = Date.now();
+                
+                // Show loading animation
+                $('#loading').fadeIn(300);
+                $('#result').fadeOut(200);
+                $('#error').fadeOut(200);
+                $('#statsContainer').hide();
+                
+                // Process the image directly (TIFF conversion only)
+                processImage(url, startTime);
+            });
+            
+            // Global progress variables
+            let progressInterval = null;
+            let timeInterval = null;
+            
+            function updateProgress(percent, step) {
+                $('#progressBar').css('width', percent + '%');
+                $('#progressText').text(percent + '%');
+                $('#currentStep').text(step);
+            }
+            
+            function updateElapsedTime(startTime) {
+                const elapsed = Math.floor((Date.now() - startTime) / 1000);
+                $('#elapsedTime').text(elapsed + 's');
+            }
+            
+            function simulateProgress(startTime) {
+                let progress = 0;
+                const steps = [
+                    { percent: 5, text: 'Connecting to server...', delay: 500 },
+                    { percent: 15, text: 'Downloading .IMG file...', delay: 2000 },
+                    { percent: 30, text: 'Analyzing PDS header...', delay: 1000 },
+                    { percent: 45, text: 'Downloading image data...', delay: 3000 },
+                    { percent: 60, text: 'Decoding image...', delay: 2000 },
+                    { percent: 75, text: 'Normalizing and processing...', delay: 2000 },
+                    { percent: 85, text: 'Converting to TIFF...', delay: 2000 },
+                    { percent: 95, text: 'Finalizing...', delay: 1000 }
+                ];
+                
+                let currentStep = 0;
+                
+                progressInterval = setInterval(() => {
+                    if (currentStep < steps.length) {
+                        const step = steps[currentStep];
+                        updateProgress(step.percent, step.text);
+                        currentStep++;
+                    }
+                }, 2000);
+                
+                // Update elapsed time every second
+                timeInterval = setInterval(() => {
+                    updateElapsedTime(startTime);
+                }, 1000);
+            }
+            
+            function stopProgress() {
+                if (progressInterval) {
+                    clearInterval(progressInterval);
+                    progressInterval = null;
+                }
+                if (timeInterval) {
+                    clearInterval(timeInterval);
+                    timeInterval = null;
+                }
+            }
+            
+            function processImage(url, startTime) {
+                console.log('Starting processImage with URL:', url);
+                
+                // Démarrer la simulation de progression
+                simulateProgress(startTime);
+                
+                // Envoyer la requête au serveur
+                const formData = new FormData();
+                formData.append('url', url);
+                
+                console.log('FormData created, URL appended:', url);
+                
+                const xhr = new XMLHttpRequest();
+                xhr.open('POST', '/process', true);
+                xhr.responseType = 'blob';
+                
+                console.log('XHR request opened to /process');
+                
+                xhr.onerror = function() {
+                    console.error('XHR error occurred');
+                    stopProgress();
+                    $('#loading').fadeOut(300);
+                    showError('Erreur réseau. Vérifiez votre connexion.');
+                };
+                
+                xhr.onload = function() {
+                    console.log('XHR onload - Status:', xhr.status);
+                    console.log('Response type:', xhr.responseType);
+                    console.log('Response size:', xhr.response ? xhr.response.size : 'N/A');
+                    
+                    // Arrêter la simulation de progression
+                    stopProgress();
+                    
+                    if (xhr.status === 200) {
+                        try {
+                            // Mettre la barre à 100%
+                            updateProgress(100, 'Conversion terminée!');
+                            updateElapsedTime(startTime);
+                            
+                            // Calculer le temps de traitement
+                            const processingTime = ((Date.now() - startTime) / 1000).toFixed(2);
+                            
+                            // Créer une URL pour l'image
+                            const blob = xhr.response;
+                            console.log('Blob size:', blob.size, 'type:', blob.type);
+                            
+                            const imageUrl = URL.createObjectURL(blob);
+                            const imageSize = formatBytes(blob.size);
+                            
+                            console.log('TIFF URL created for download:', imageUrl);
+                            
+                            // Mettre à jour le lien de téléchargement
+                            $('#downloadBtn').attr('href', imageUrl);
+                            
+                            // Afficher les informations PDS détectées
+                            const pdsVersion = xhr.getResponseHeader('X-PDS-Version') || 'Inconnu';
+                            const cacheHit = xhr.getResponseHeader('X-Cache-Hit') === 'true';
+                            
+                            console.log('PDS Version:', pdsVersion, 'Cache Hit:', cacheHit);
+                            
+                            let pdsInfoHtml = '<i class="fas fa-satellite-dish"></i> Format détecté: <strong>' + pdsVersion + '</strong>';
+                            
+                            if (cacheHit) {
+                                pdsInfoHtml += ' <span class="badge bg-success"><i class="fas fa-bolt"></i> Cache</span>';
+                            } else {
+                                pdsInfoHtml += ' <span class="badge bg-primary"><i class="fas fa-sparkles"></i> Nouveau</span>';
+                            }
+                            
+                            $('#pdsInfo').html(pdsInfoHtml);
+                            
+                            // Afficher les statistiques
+                            $('#statTime').html(processingTime + '<small>s</small>');
+                            $('#statSize').html(imageSize);
+                            $('#statFormat').html(pdsVersion);
+                            
+                            // Store image data
+                            currentImageData = {
+                                imageUrl: imageUrl,
+                                pdsVersion: pdsVersion,
+                                cacheHit: cacheHit,
+                                imageSize: imageSize
+                            };
+                            
+                            console.log('Hiding loading, showing result...');
+                            
+                            // Afficher le résultat (sans viewer) avec animation
+                            $('#loading').fadeOut(300, function() {
+                                console.log('Loading hidden');
+                                $('#result').fadeIn(500, function() {
+                                    console.log('Result shown');
+                                    $('#statsContainer').fadeIn(400);
+                                    $('#downloadContainer').fadeIn(300);
+                                });
+                            });
+                        } catch (e) {
+                            console.error('Error in success handler:', e);
+                            showError('Erreur lors de l\'affichage: ' + e.message);
+                        }
+                    } else {
+                        // Gérer les erreurs
+                        console.log('Error status:', xhr.status);
+                        stopProgress();
+                        $('#loading').fadeOut(300);
+                        
+                        if (xhr.response) {
+                            xhr.response.text().then(text => {
+                                console.log('Error response text:', text);
+                                try {
+                                    const error = JSON.parse(text);
+                                    showError(error.error || 'Une erreur est survenue');
+                                } catch (e) {
+                                    showError(text || 'Une erreur est survenue lors de la conversion (Status: ' + xhr.status + ')');
+                                }
+                            });
+                        } else {
+                            showError('Erreur de serveur (Status: ' + xhr.status + ')');
+                        }
+                    }
+                };
+                
+                console.log('Sending XHR request...');
+                xhr.send(formData);
+                console.log('XHR request sent');
+            }
+            
+            function formatBytes(bytes) {
+                if (bytes === 0) return '0 B';
+                const k = 1024;
+                const sizes = ['B', 'KB', 'MB', 'GB', 'TB'];
+                const i = Math.floor(Math.log(bytes) / Math.log(k));
+                return parseFloat((bytes / Math.pow(k, i)).toFixed(2)) + ' ' + sizes[i];
+            }
+            
+            function showError(message) {
+                $('#error').fadeIn(300);
+                $('#errorText').text(message);
+            }
+            
+            // Focus effect on input
+            $('#imageUrl').on('focus', function() {
+                $(this).parent().addClass('animate__animated animate__pulse');
+            }).on('blur', function() {
+                $(this).parent().removeClass('animate__animated animate__pulse');
+            });
+        });
+    </script>
+</body>
+</html>

@@ -1,0 +1,388 @@
+/* ================================================================
+   LOADING SCREEN - Écran de chargement spatial
+   Animation d'accueil avec identité forte
+   ================================================================ */
+
+/* === SPLASH SCREEN === */
+.splash-screen {
+    position: fixed;
+    inset: 0;
+    background: radial-gradient(circle at 50% 50%, #1a1f2e 0%, #0a0e1a 100%);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    z-index: var(--z-loader);
+    animation: fade-in 0.5s ease-out;
+}
+
+/* Fond animé */
+.splash-background {
+    position: absolute;
+    inset: 0;
+    overflow: hidden;
+}
+
+.splash-stars {
+    position: absolute;
+    inset: 0;
+    background-image: 
+        radial-gradient(2px 2px at 20% 30%, white, transparent),
+        radial-gradient(2px 2px at 60% 70%, white, transparent),
+        radial-gradient(1px 1px at 50% 50%, white, transparent),
+        radial-gradient(1px 1px at 80% 10%, white, transparent),
+        radial-gradient(2px 2px at 90% 60%, white, transparent);
+    background-size: 200% 200%;
+    animation: stars-float 60s linear infinite;
+    opacity: 0.6;
+}
+
+/* Orbites animées */
+.orbit-ring {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    border: 1px solid rgba(0, 212, 255, 0.2);
+    border-radius: 50%;
+    animation: orbit-spin 20s linear infinite;
+}
+
+.orbit-ring:nth-child(1) {
+    width: 300px;
+    height: 300px;
+    animation-duration: 20s;
+}
+
+.orbit-ring:nth-child(2) {
+    width: 400px;
+    height: 400px;
+    animation-duration: 30s;
+    animation-direction: reverse;
+}
+
+.orbit-ring:nth-child(3) {
+    width: 500px;
+    height: 500px;
+    animation-duration: 40s;
+}
+
+@keyframes orbit-spin {
+    from {
+        transform: translate(-50%, -50%) rotate(0deg);
+    }
+    to {
+        transform: translate(-50%, -50%) rotate(360deg);
+    }
+}
+
+/* === LOGO & BRANDING === */
+.splash-logo {
+    position: relative;
+    z-index: 2;
+    margin-bottom: var(--space-2xl);
+    animation: logo-appear 1s ease-out;
+}
+
+@keyframes logo-appear {
+    from {
+        opacity: 0;
+        transform: scale(0.8) translateY(30px);
+    }
+    to {
+        opacity: 1;
+        transform: scale(1) translateY(0);
+    }
+}
+
+.logo-icon {
+    width: 120px;
+    height: 120px;
+    margin: 0 auto var(--space-lg);
+    background: var(--gradient-aurora);
+    border-radius: var(--radius-2xl);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 3rem;
+    box-shadow: 
+        var(--shadow-strong),
+        0 0 60px rgba(0, 212, 255, 0.4);
+    animation: logo-pulse 2s ease-in-out infinite;
+}
+
+@keyframes logo-pulse {
+    0%, 100% {
+        transform: scale(1);
+        box-shadow: 
+            var(--shadow-strong),
+            0 0 60px rgba(0, 212, 255, 0.4);
+    }
+    50% {
+        transform: scale(1.05);
+        box-shadow: 
+            var(--shadow-strong),
+            0 0 80px rgba(0, 212, 255, 0.6);
+    }
+}
+
+.logo-text {
+    text-align: center;
+}
+
+.logo-title {
+    font-family: var(--font-display);
+    font-size: 2.5rem;
+    font-weight: 800;
+    background: var(--gradient-aurora);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+    margin-bottom: var(--space-sm);
+    letter-spacing: 0.05em;
+}
+
+.logo-subtitle {
+    font-size: 1rem;
+    color: var(--star-silver);
+    font-weight: 300;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+}
+
+/* === LOADING ANIMATION === */
+.loading-animation {
+    position: relative;
+    z-index: 2;
+    margin-top: var(--space-3xl);
+}
+
+/* Spinner orbital */
+.orbital-spinner {
+    position: relative;
+    width: 100px;
+    height: 100px;
+    margin: 0 auto var(--space-xl);
+}
+
+.orbital-spinner-ring {
+    position: absolute;
+    inset: 0;
+    border: 3px solid transparent;
+    border-radius: 50%;
+    animation: spin 1.5s linear infinite;
+}
+
+.orbital-spinner-ring:nth-child(1) {
+    border-top-color: var(--nebula-cyan);
+    animation-duration: 1.5s;
+}
+
+.orbital-spinner-ring:nth-child(2) {
+    border-right-color: var(--nebula-purple);
+    animation-duration: 2s;
+    animation-direction: reverse;
+}
+
+.orbital-spinner-ring:nth-child(3) {
+    border-bottom-color: var(--nebula-pink);
+    animation-duration: 2.5s;
+}
+
+/* Progress bar */
+.loading-progress {
+    width: 300px;
+    height: 4px;
+    background: var(--space-light);
+    border-radius: var(--radius-full);
+    overflow: hidden;
+    position: relative;
+}
+
+.loading-progress-bar {
+    height: 100%;
+    background: var(--gradient-aurora);
+    border-radius: var(--radius-full);
+    transition: width 0.3s ease-out;
+    box-shadow: 0 0 20px rgba(0, 212, 255, 0.5);
+}
+
+/* Indeterminate progress (si pas de pourcentage) */
+.loading-progress.indeterminate .loading-progress-bar {
+    width: 40% !important;
+    animation: indeterminate-progress 1.5s ease-in-out infinite;
+}
+
+@keyframes indeterminate-progress {
+    0% {
+        transform: translateX(-100%);
+    }
+    100% {
+        transform: translateX(350%);
+    }
+}
+
+.loading-text {
+    text-align: center;
+    margin-top: var(--space-md);
+    color: var(--star-silver);
+    font-size: 0.875rem;
+}
+
+.loading-percentage {
+    display: block;
+    font-family: var(--font-mono);
+    color: var(--nebula-cyan);
+    font-size: 1.25rem;
+    font-weight: 700;
+    margin-top: var(--space-sm);
+}
+
+/* === STATUS MESSAGES === */
+.loading-status {
+    position: absolute;
+    bottom: var(--space-3xl);
+    left: 50%;
+    transform: translateX(-50%);
+    text-align: center;
+    color: var(--star-silver);
+    font-size: 0.8rem;
+}
+
+.loading-status-icon {
+    display: inline-block;
+    margin-right: var(--space-xs);
+    animation: pulse 1s ease-in-out infinite;
+}
+
+/* === TRANSITION OUT === */
+.splash-screen.fade-out {
+    animation: fade-out 0.8s ease-out forwards;
+}
+
+@keyframes fade-out {
+    to {
+        opacity: 0;
+        visibility: hidden;
+    }
+}
+
+/* === MINI LOADER (pour overlays) === */
+.mini-loader {
+    display: inline-block;
+    width: 20px;
+    height: 20px;
+    border: 2px solid transparent;
+    border-top-color: var(--nebula-cyan);
+    border-radius: 50%;
+    animation: spin 0.8s linear infinite;
+}
+
+/* Loader avec texte */
+.loader-inline {
+    display: inline-flex;
+    align-items: center;
+    gap: var(--space-sm);
+    color: var(--star-silver);
+    font-size: 0.875rem;
+}
+
+/* === SKELETON LOADERS === */
+.skeleton {
+    background: linear-gradient(
+        90deg,
+        var(--space-light) 0%,
+        var(--space-medium) 50%,
+        var(--space-light) 100%
+    );
+    background-size: 200% 100%;
+    animation: skeleton-loading 1.5s ease-in-out infinite;
+    border-radius: var(--radius-md);
+}
+
+@keyframes skeleton-loading {
+    0% {
+        background-position: 200% 0;
+    }
+    100% {
+        background-position: -200% 0;
+    }
+}
+
+.skeleton-text {
+    height: 1em;
+    margin-bottom: var(--space-sm);
+}
+
+.skeleton-title {
+    height: 1.5em;
+    width: 60%;
+    margin-bottom: var(--space-md);
+}
+
+.skeleton-image {
+    width: 100%;
+    aspect-ratio: 16/9;
+}
+
+/* === RESPONSIVE === */
+@media (max-width: 768px) {
+    .logo-icon {
+        width: 100px;
+        height: 100px;
+        font-size: 2.5rem;
+    }
+    
+    .logo-title {
+        font-size: 2rem;
+    }
+    
+    .logo-subtitle {
+        font-size: 0.875rem;
+    }
+    
+    .orbital-spinner {
+        width: 80px;
+        height: 80px;
+    }
+    
+    .loading-progress {
+        width: 250px;
+    }
+    
+    .orbit-ring:nth-child(1) {
+        width: 200px;
+        height: 200px;
+    }
+    
+    .orbit-ring:nth-child(2) {
+        width: 280px;
+        height: 280px;
+    }
+    
+    .orbit-ring:nth-child(3) {
+        width: 360px;
+        height: 360px;
+    }
+}
+
+@media (max-width: 480px) {
+    .logo-icon {
+        width: 80px;
+        height: 80px;
+        font-size: 2rem;
+    }
+    
+    .logo-title {
+        font-size: 1.5rem;
+    }
+    
+    .loading-progress {
+        width: 200px;
+    }
+    
+    .orbital-spinner {
+        width: 60px;
+        height: 60px;
+    }
+}

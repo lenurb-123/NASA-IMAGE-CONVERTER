@@ -1,0 +1,332 @@
+/* ================================================================
+   IMAGE VIEWER - Zone principale de visualisation
+   Composant principal pour explorer les images scientifiques
+   ================================================================ */
+
+/* === CONTAINER PRINCIPAL === */
+.image-viewer-container {
+    position: relative;
+    width: 100%;
+    height: 100vh;
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+}
+
+/* === ZONE DE VISUALISATION === */
+.viewer-canvas {
+    flex: 1;
+    position: relative;
+    background: linear-gradient(135deg, #0a0e1a 0%, #0f1419 100%);
+    overflow: hidden;
+    border-radius: var(--radius-xl);
+    margin: var(--space-md);
+    box-shadow: 
+        var(--shadow-strong),
+        inset 0 0 100px rgba(0, 102, 255, 0.05);
+}
+
+/* Image principale */
+.viewer-image {
+    position: absolute;
+    inset: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: transform var(--transition-slow);
+    cursor: grab;
+}
+
+.viewer-image:active {
+    cursor: grabbing;
+}
+
+.viewer-image img {
+    max-width: 100%;
+    max-height: 100%;
+    object-fit: contain;
+    border-radius: var(--radius-lg);
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.5);
+    filter: drop-shadow(0 0 20px rgba(0, 212, 255, 0.1));
+    transition: filter var(--transition-base);
+}
+
+.viewer-image img:hover {
+    filter: drop-shadow(0 0 30px rgba(0, 212, 255, 0.2));
+}
+
+/* === OVERLAYS DE LA ZONE === */
+.viewer-overlay {
+    position: absolute;
+    inset: 0;
+    pointer-events: none;
+}
+
+/* Grille scientifique (optionnelle) */
+.viewer-grid {
+    position: absolute;
+    inset: 0;
+    background-image: 
+        linear-gradient(rgba(255, 255, 255, 0.03) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(255, 255, 255, 0.03) 1px, transparent 1px);
+    background-size: 50px 50px;
+    opacity: 0;
+    transition: opacity var(--transition-base);
+}
+
+.viewer-grid.active {
+    opacity: 1;
+}
+
+/* === COORDONNÉES ET INFOS === */
+.viewer-coordinates {
+    position: absolute;
+    bottom: var(--space-md);
+    left: var(--space-md);
+    padding: var(--space-sm) var(--space-md);
+    background: var(--glass-bg);
+    backdrop-filter: blur(20px);
+    border: 1px solid var(--glass-border);
+    border-radius: var(--radius-md);
+    font-family: var(--font-mono);
+    font-size: 0.75rem;
+    color: var(--nebula-cyan);
+    box-shadow: var(--shadow-soft);
+    pointer-events: none;
+    opacity: 0;
+    transform: translateY(10px);
+    transition: all var(--transition-base);
+}
+
+.viewer-coordinates.active {
+    opacity: 1;
+    transform: translateY(0);
+}
+
+.viewer-coordinates span {
+    display: inline-block;
+    margin-right: var(--space-md);
+}
+
+/* === ZOOM INDICATOR === */
+.zoom-indicator {
+    position: absolute;
+    top: var(--space-md);
+    left: var(--space-md);
+    padding: var(--space-xs) var(--space-sm);
+    background: var(--glass-bg);
+    backdrop-filter: blur(10px);
+    border: 1px solid var(--glass-border);
+    border-radius: var(--radius-sm);
+    font-size: 0.75rem;
+    color: var(--star-silver);
+    font-weight: 600;
+    pointer-events: none;
+}
+
+/* === ZONE DE SÉLECTION === */
+.selection-box {
+    position: absolute;
+    border: 2px dashed var(--nebula-cyan);
+    background: rgba(0, 212, 255, 0.1);
+    pointer-events: none;
+    border-radius: var(--radius-sm);
+    box-shadow: 0 0 20px rgba(0, 212, 255, 0.3);
+    animation: selection-pulse 1.5s ease-in-out infinite;
+}
+
+@keyframes selection-pulse {
+    0%, 100% {
+        opacity: 0.8;
+    }
+    50% {
+        opacity: 1;
+    }
+}
+
+/* === ANNOTATIONS === */
+.annotation-marker {
+    position: absolute;
+    width: 24px;
+    height: 24px;
+    background: var(--nebula-purple);
+    border: 2px solid white;
+    border-radius: 50%;
+    cursor: pointer;
+    transform: translate(-50%, -50%);
+    box-shadow: 
+        0 4px 12px rgba(99, 102, 241, 0.4),
+        0 0 0 0 rgba(99, 102, 241, 0.7);
+    transition: all var(--transition-base);
+    animation: marker-ping 2s cubic-bezier(0, 0, 0.2, 1) infinite;
+}
+
+@keyframes marker-ping {
+    75%, 100% {
+        box-shadow: 
+            0 4px 12px rgba(99, 102, 241, 0.4),
+            0 0 0 20px rgba(99, 102, 241, 0);
+    }
+}
+
+.annotation-marker:hover {
+    transform: translate(-50%, -50%) scale(1.2);
+    background: var(--nebula-cyan);
+}
+
+/* Popup d'annotation */
+.annotation-popup {
+    position: absolute;
+    min-width: 200px;
+    max-width: 300px;
+    padding: var(--space-md);
+    background: var(--space-medium);
+    border: 1px solid var(--glass-border);
+    border-radius: var(--radius-lg);
+    box-shadow: var(--shadow-medium);
+    z-index: var(--z-overlay);
+    animation: scale-in 0.2s ease-out;
+}
+
+.annotation-popup::before {
+    content: '';
+    position: absolute;
+    bottom: -8px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 0;
+    height: 0;
+    border-left: 8px solid transparent;
+    border-right: 8px solid transparent;
+    border-top: 8px solid var(--space-medium);
+}
+
+.annotation-popup-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: var(--space-sm);
+    padding-bottom: var(--space-sm);
+    border-bottom: 1px solid var(--glass-border);
+}
+
+.annotation-popup-title {
+    font-size: 0.875rem;
+    font-weight: 600;
+    color: var(--nebula-cyan);
+}
+
+.annotation-popup-close {
+    width: 20px;
+    height: 20px;
+    border: none;
+    background: transparent;
+    color: var(--star-silver);
+    cursor: pointer;
+    transition: color var(--transition-fast);
+}
+
+.annotation-popup-close:hover {
+    color: var(--star-white);
+}
+
+.annotation-popup-content {
+    font-size: 0.8rem;
+    color: var(--star-silver);
+    line-height: 1.5;
+}
+
+/* === MEASUREMENT TOOL === */
+.measurement-line {
+    position: absolute;
+    height: 2px;
+    background: var(--solar-orange);
+    transform-origin: left center;
+    pointer-events: none;
+    box-shadow: 0 0 10px rgba(245, 158, 11, 0.5);
+}
+
+.measurement-label {
+    position: absolute;
+    padding: var(--space-xs) var(--space-sm);
+    background: var(--solar-orange);
+    color: white;
+    font-size: 0.7rem;
+    font-weight: 600;
+    border-radius: var(--radius-sm);
+    white-space: nowrap;
+    pointer-events: none;
+    font-family: var(--font-mono);
+}
+
+/* === LOADING STATE === */
+.viewer-loading {
+    position: absolute;
+    inset: 0;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    background: rgba(10, 14, 26, 0.95);
+    z-index: var(--z-overlay);
+}
+
+.viewer-loading-spinner {
+    width: 60px;
+    height: 60px;
+    border: 3px solid transparent;
+    border-top-color: var(--nebula-cyan);
+    border-right-color: var(--nebula-purple);
+    border-radius: 50%;
+    animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+    to {
+        transform: rotate(360deg);
+    }
+}
+
+.viewer-loading-text {
+    margin-top: var(--space-md);
+    color: var(--star-silver);
+    font-size: 0.875rem;
+}
+
+/* === RESPONSIVE === */
+@media (max-width: 1024px) {
+    .viewer-canvas {
+        margin: var(--space-sm);
+        border-radius: var(--radius-lg);
+    }
+    
+    .annotation-popup {
+        max-width: 250px;
+    }
+}
+
+@media (max-width: 768px) {
+    .viewer-coordinates {
+        font-size: 0.65rem;
+        padding: var(--space-xs) var(--space-sm);
+    }
+    
+    .zoom-indicator {
+        font-size: 0.65rem;
+    }
+    
+    .viewer-image img {
+        border-radius: var(--radius-md);
+    }
+}
+
+@media (max-width: 480px) {
+    .viewer-canvas {
+        margin: var(--space-xs);
+        border-radius: var(--radius-md);
+    }
+    
+    .viewer-coordinates {
+        display: none; /* Cache sur très petit écran */
+    }
+}

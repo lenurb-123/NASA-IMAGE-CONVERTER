@@ -1,0 +1,490 @@
+/* ================================================================
+   AMÉLIORATION INTERFACE - CSS Direct
+   Transforme l'interface actuelle en design organisé et moderne
+   ================================================================ */
+
+/* === LAYOUT GLOBAL === */
+.container {
+    max-width: 1400px;
+    margin: 0 auto;
+    padding: 2rem;
+}
+
+/* === HEADER AMÉLIORÉ === */
+.header {
+    text-align: center;
+    margin-bottom: 3rem;
+    padding: 2rem;
+    background: linear-gradient(135deg, rgba(0, 212, 255, 0.1), rgba(99, 102, 241, 0.1));
+    border-radius: 20px;
+    border: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.header h1 {
+    font-family: 'Space Grotesk', 'Inter', sans-serif;
+    font-size: 2.5rem;
+    font-weight: 800;
+    background: linear-gradient(135deg, #00d4ff 0%, #0099ff 50%, #6366f1 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+    margin-bottom: 0.5rem;
+    letter-spacing: 0.02em;
+}
+
+.subtitle {
+    font-size: 1rem;
+    color: rgba(255, 255, 255, 0.7);
+    font-weight: 300;
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+}
+
+.nasa-badge {
+    display: inline-block;
+    margin-top: 1rem;
+    padding: 0.5rem 1.5rem;
+    background: rgba(16, 185, 129, 0.2);
+    border: 1px solid rgba(16, 185, 129, 0.4);
+    border-radius: 50px;
+    color: #10b981;
+    font-size: 0.875rem;
+    font-weight: 600;
+}
+
+/* === CARTE PRINCIPALE === */
+.main-card {
+    background: rgba(26, 31, 46, 0.8);
+    backdrop-filter: blur(20px);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    border-radius: 24px;
+    padding: 3rem;
+    box-shadow: 0 20px 60px rgba(0, 0, 0, 0.5);
+    margin-bottom: 2rem;
+}
+
+/* === FORMULAIRE === */
+.form-label {
+    display: block;
+    font-weight: 600;
+    font-size: 1rem;
+    color: #ffffff;
+    margin-bottom: 0.75rem;
+}
+
+.form-label i {
+    color: #00d4ff;
+    margin-right: 0.5rem;
+}
+
+.form-control {
+    width: 100%;
+    padding: 1.25rem 1.5rem;
+    background: rgba(255, 255, 255, 0.05);
+    border: 2px solid rgba(255, 255, 255, 0.1);
+    border-radius: 12px;
+    color: #ffffff;
+    font-size: 1rem;
+    font-family: 'Inter', sans-serif;
+    transition: all 0.3s ease;
+}
+
+.form-control:focus {
+    outline: none;
+    border-color: #00d4ff;
+    background: rgba(255, 255, 255, 0.08);
+    box-shadow: 0 0 0 4px rgba(0, 212, 255, 0.15);
+}
+
+.form-control::placeholder {
+    color: rgba(255, 255, 255, 0.4);
+}
+
+.form-text {
+    margin-top: 0.5rem;
+    font-size: 0.875rem;
+    color: rgba(255, 255, 255, 0.6);
+}
+
+/* === BOUTON DE CONVERSION === */
+.btn-convert {
+    width: 100%;
+    padding: 1.5rem 2rem;
+    background: linear-gradient(135deg, #00d4ff 0%, #0099ff 50%, #6366f1 100%);
+    border: none;
+    border-radius: 12px;
+    color: white;
+    font-size: 1.125rem;
+    font-weight: 700;
+    cursor: pointer;
+    margin-top: 2rem;
+    transition: all 0.3s ease;
+    position: relative;
+    overflow: hidden;
+}
+
+.btn-convert::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: -100%;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(90deg, transparent, rgba(255,255,255,0.3), transparent);
+    transition: left 0.5s;
+}
+
+.btn-convert:hover::before {
+    left: 100%;
+}
+
+.btn-convert:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 10px 40px rgba(0, 212, 255, 0.4);
+}
+
+.btn-convert:active {
+    transform: translateY(-1px);
+}
+
+.btn-convert i {
+    margin-right: 0.5rem;
+}
+
+/* === SECTION DE CHARGEMENT === */
+#loading {
+    display: none;
+    text-align: center;
+    margin-top: 3rem;
+    padding: 3rem;
+    background: rgba(26, 31, 46, 0.6);
+    border-radius: 20px;
+    border: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.loading-text {
+    font-size: 1.25rem;
+    font-weight: 600;
+    color: #ffffff;
+    margin-bottom: 1rem;
+}
+
+.loading-text i {
+    color: #00d4ff;
+    animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+    from { transform: rotate(0deg); }
+    to { transform: rotate(360deg); }
+}
+
+.loading-subtext {
+    color: rgba(255, 255, 255, 0.7);
+    font-size: 1rem;
+    margin-bottom: 2rem;
+}
+
+/* === BARRE DE PROGRESSION AMÉLIORÉE === */
+.progress-container {
+    margin-top: 2rem;
+    width: 100%;
+    max-width: 700px;
+    margin-left: auto;
+    margin-right: auto;
+}
+
+.progress-bar-bg {
+    background: rgba(255, 255, 255, 0.08);
+    border-radius: 16px;
+    height: 48px;
+    position: relative;
+    overflow: hidden;
+    border: 2px solid rgba(255, 255, 255, 0.15);
+    box-shadow: inset 0 2px 8px rgba(0, 0, 0, 0.3);
+}
+
+.progress-bar-fill {
+    background: linear-gradient(90deg, #00d4ff 0%, #0099ff 50%, #6366f1 100%);
+    height: 100%;
+    width: 0%;
+    transition: width 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+    border-radius: 14px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    box-shadow: 
+        0 0 30px rgba(0, 212, 255, 0.6),
+        inset 0 2px 4px rgba(255, 255, 255, 0.3);
+    position: relative;
+    overflow: hidden;
+}
+
+/* Animation shimmer sur la barre */
+.progress-bar-fill::after {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: -100%;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(90deg, transparent, rgba(255,255,255,0.4), transparent);
+    animation: shimmer 2s infinite;
+}
+
+@keyframes shimmer {
+    to {
+        left: 200%;
+    }
+}
+
+#progressText {
+    color: white;
+    font-weight: 800;
+    font-size: 1.25rem;
+    text-shadow: 0 2px 8px rgba(0, 0, 0, 0.5);
+    position: relative;
+    z-index: 2;
+    letter-spacing: 0.05em;
+}
+
+#progressDetails {
+    text-align: center;
+    margin-top: 1.25rem;
+    padding: 1rem;
+    background: rgba(255, 255, 255, 0.03);
+    border-radius: 12px;
+    border: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+#progressDetails i {
+    color: #00d4ff;
+    margin-right: 0.5rem;
+}
+
+#elapsedTime {
+    color: #00d4ff;
+    font-weight: 700;
+    font-family: 'JetBrains Mono', 'Courier New', monospace;
+    font-size: 1.1rem;
+    background: rgba(0, 212, 255, 0.1);
+    padding: 0.25rem 0.75rem;
+    border-radius: 6px;
+}
+
+#currentStep {
+    color: #ffffff;
+    font-weight: 600;
+    font-size: 1rem;
+    margin-left: 0.5rem;
+}
+
+/* === SECTION RÉSULTAT === */
+#result {
+    display: none;
+    margin-top: 3rem;
+    padding: 3rem;
+    background: rgba(26, 31, 46, 0.8);
+    border-radius: 24px;
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    animation: slideUp 0.5s ease-out;
+}
+
+@keyframes slideUp {
+    from {
+        opacity: 0;
+        transform: translateY(30px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.result-header {
+    text-align: center;
+    font-size: 1.5rem;
+    font-weight: 700;
+    color: #10b981;
+    margin-bottom: 2rem;
+}
+
+.result-header i {
+    margin-right: 0.75rem;
+    font-size: 1.75rem;
+}
+
+/* === INFO PDS === */
+.pds-info {
+    background: rgba(0, 212, 255, 0.08);
+    border: 1px solid rgba(0, 212, 255, 0.2);
+    border-radius: 12px;
+    padding: 1.5rem;
+    margin-bottom: 2rem;
+}
+
+.pds-info h3 {
+    color: #00d4ff;
+    font-size: 1.125rem;
+    margin-bottom: 1rem;
+    font-weight: 600;
+}
+
+.pds-info p {
+    color: rgba(255, 255, 255, 0.8);
+    line-height: 1.6;
+}
+
+/* === BOUTON TÉLÉCHARGEMENT === */
+.btn-download {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.75rem;
+    padding: 1.25rem 2.5rem;
+    background: linear-gradient(135deg, #10b981, #059669);
+    border: none;
+    border-radius: 12px;
+    color: white;
+    font-size: 1.125rem;
+    font-weight: 700;
+    text-decoration: none;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    box-shadow: 0 10px 30px rgba(16, 185, 129, 0.3);
+}
+
+.btn-download:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 15px 40px rgba(16, 185, 129, 0.5);
+    text-decoration: none;
+    color: white;
+}
+
+/* === STATISTIQUES === */
+.stats-container {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 1.5rem;
+    margin-top: 2rem;
+}
+
+.stat-card {
+    background: rgba(255, 255, 255, 0.05);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    border-radius: 16px;
+    padding: 1.5rem;
+    text-align: center;
+    transition: all 0.3s ease;
+}
+
+.stat-card:hover {
+    background: rgba(255, 255, 255, 0.08);
+    transform: translateY(-5px);
+    border-color: rgba(0, 212, 255, 0.3);
+}
+
+.stat-value {
+    color: #00d4ff;
+    font-size: 2rem;
+    font-weight: 800;
+    margin-bottom: 0.5rem;
+    font-family: 'Space Grotesk', sans-serif;
+}
+
+.stat-label {
+    color: rgba(255, 255, 255, 0.7);
+    font-size: 0.875rem;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+}
+
+/* === ERREURS === */
+#error {
+    display: none;
+    margin-top: 2rem;
+    padding: 1.5rem;
+    background: rgba(239, 68, 68, 0.15);
+    border: 2px solid rgba(239, 68, 68, 0.4);
+    border-radius: 12px;
+    color: #ff6b6b;
+}
+
+.alert-danger {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+}
+
+.alert-danger i {
+    font-size: 1.5rem;
+    flex-shrink: 0;
+}
+
+/* === RESPONSIVE === */
+@media (max-width: 1024px) {
+    .container {
+        padding: 1.5rem;
+    }
+    
+    .main-card {
+        padding: 2rem;
+    }
+}
+
+@media (max-width: 768px) {
+    .header h1 {
+        font-size: 2rem;
+    }
+    
+    .main-card {
+        padding: 1.5rem;
+    }
+    
+    .btn-convert {
+        font-size: 1rem;
+        padding: 1.25rem 1.5rem;
+    }
+    
+    .progress-bar-bg {
+        height: 40px;
+    }
+    
+    #progressText {
+        font-size: 1rem;
+    }
+    
+    .stats-container {
+        grid-template-columns: 1fr;
+    }
+}
+
+@media (max-width: 480px) {
+    .container {
+        padding: 1rem;
+    }
+    
+    .header {
+        padding: 1.5rem;
+        margin-bottom: 2rem;
+    }
+    
+    .header h1 {
+        font-size: 1.5rem;
+    }
+    
+    .subtitle {
+        font-size: 0.75rem;
+    }
+    
+    .main-card {
+        padding: 1.25rem;
+    }
+    
+    .progress-bar-bg {
+        height: 36px;
+    }
+    
+    #progressDetails {
+        font-size: 0.875rem;
+    }
+}
